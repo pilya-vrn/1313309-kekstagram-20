@@ -36,6 +36,7 @@ var createComments = function () {
   for (var i = 0; i <= getRandomNumber(MIN_COMMENTS, MAX_COMMENTS); i++) {
     comments.push(comment);
   }
+
   return comments;
 };
 
