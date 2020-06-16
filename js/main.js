@@ -15,16 +15,12 @@ var MAX_LIKES = 200;
 var MIN_COMMENTS = 0;
 var MAX_COMMENTS = 100;
 
-var photos = [];
-
 var pictureTemplate = document.querySelector('#picture');
 var pictureContent = pictureTemplate.content.querySelector('.picture');
 var picturesList = document.querySelector('.pictures');
 
 var getRandomNumber = function (min, max) {
-  var randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
-
-  return randomNumber;
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
 var createComments = function () {
@@ -33,6 +29,7 @@ var createComments = function () {
     name: AUTHOR_NAMES[getRandomNumber(0, AUTHOR_NAMES.length - 1)]
   };
   var comments = [];
+
   for (var i = 0; i <= getRandomNumber(MIN_COMMENTS, MAX_COMMENTS); i++) {
     comments.push(comment);
   }
@@ -41,6 +38,7 @@ var createComments = function () {
 };
 
 var createPhotos = function () {
+  var photos = [];
   for (var i = 0; i < NUMBER_PHOTOS; i++) {
     var photo = {url: 'photos/' + (i + 1) + '.jpg',
       description: '',
@@ -53,6 +51,8 @@ var createPhotos = function () {
   return photos;
 };
 
+var photoList = createPhotos(NUMBER_PHOTOS);
+
 var createPhotoElement = function (photo) {
   var photoElement = pictureContent.cloneNode(true);
   photoElement.querySelector('.picture__img').src = photo.url;
@@ -62,7 +62,7 @@ var createPhotoElement = function (photo) {
   return photoElement;
 };
 
-var renderPhotos = function () {
+var renderPhotos = function (photos) {
   var fragment = document.createDocumentFragment();
 
   for (var i = 0; i < NUMBER_PHOTOS; i++) {
@@ -72,5 +72,4 @@ var renderPhotos = function () {
   picturesList.appendChild(fragment);
 };
 
-createPhotos();
-renderPhotos();
+renderPhotos(photoList);
