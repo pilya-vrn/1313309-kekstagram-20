@@ -23,29 +23,37 @@ var getRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-var createComments = function () {
-  var comment = {avatar: 'img/avatar-' + getRandomNumber(1, 6) + '.svg',
+var createComment = function () {
+  return {avatar: 'img/avatar-' + getRandomNumber(1, 6) + '.svg',
     message: MESSAGES[getRandomNumber(0, MESSAGES.length - 1)],
     name: AUTHOR_NAMES[getRandomNumber(0, AUTHOR_NAMES.length - 1)]
   };
+
+};
+
+var createComments = function () {
   var comments = [];
 
   for (var i = 0; i <= getRandomNumber(MIN_COMMENTS, MAX_COMMENTS); i++) {
-    comments.push(comment);
+    comments.push(createComment());
   }
 
   return comments;
 };
 
+var createPhoto = function (i) {
+  return {url: 'photos/' + (i + 1) + '.jpg',
+    description: '',
+    likes: getRandomNumber(MIN_LIKES, MAX_LIKES),
+    comments: createComments()
+  };
+};
+
+
 var createPhotos = function () {
   var photos = [];
   for (var i = 0; i < NUMBER_PHOTOS; i++) {
-    var photo = {url: 'photos/' + (i + 1) + '.jpg',
-      description: '',
-      likes: getRandomNumber(MIN_LIKES, MAX_LIKES),
-      comments: createComments()
-    };
-    photos.push(photo);
+    photos.push(createPhoto(i));
   }
 
   return photos;
