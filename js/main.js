@@ -24,7 +24,8 @@ var getRandomNumber = function (min, max) {
 };
 
 var createComment = function () {
-  return {avatar: 'img/avatar-' + getRandomNumber(1, 6) + '.svg',
+  return {
+    avatar: 'img/avatar-' + getRandomNumber(1, 6) + '.svg',
     message: MESSAGES[getRandomNumber(0, MESSAGES.length - 1)],
     name: AUTHOR_NAMES[getRandomNumber(0, AUTHOR_NAMES.length - 1)]
   };
@@ -42,7 +43,8 @@ var createComments = function () {
 };
 
 var createPhoto = function (i) {
-  return {url: 'photos/' + (i + 1) + '.jpg',
+  return {
+    url: 'photos/' + (i + 1) + '.jpg',
     description: '',
     likes: getRandomNumber(MIN_LIKES, MAX_LIKES),
     comments: createComments()
