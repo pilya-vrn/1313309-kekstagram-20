@@ -73,3 +73,57 @@ var renderPhotos = function (photos) {
 };
 
 renderPhotos(photoList);
+
+// наполнение биг фото
+var renderCommentsFragment = function (photo) {
+  var commentsFragment = document.createDocumentFragment();
+
+  var commentTemplate = document.querySelector('#comment')
+  .content
+  .querySelector('.social__comment');
+
+  for (var i = 0; i < photo.comments.length; i++) {
+    var comment = commentTemplate.cloneNode(true);
+    var commentAvatar = comment.querySelector('img');
+    var commetMessage = comment.querySelector('.social__text');
+
+    commentAvatar.src = photo.comments[i].avatar;
+    commentAvatar.alt = photo.comments[i].name;
+    commetMessage.textContent = photo.comments[i].messsage;
+
+    commentsFragment.appendChild(comment);
+  }
+
+  return commentsFragment;
+};
+
+// Отображает биг фото
+var renderBigPhoto = function (photo) {
+  var bigPicture = document.querySelector('.big-picture');
+  bigPicture.classList.remove('hidden');
+
+  var bigPictureImg = bigPicture.querySelector('.big-picture__img img');
+  var bigPictureLikes = bigPicture.querySelector('.likes-count');
+  var bigPictureDescription = bigPicture.querySelector('.social__caption');
+  var bigPictureCommentsCount = bigPicture.querySelector('.comments-count');
+  var bigPictureComments = bigPicture.querySelector('.social__comments');
+
+  bigPictureImg.src = photo.url;
+  bigPictureLikes.textContent = photo.likes;
+  bigPictureDescription.textContent = photo.description;
+
+  bigPictureCommentsCount.textContent = photo.comments.length;
+  bigPictureComments.textContent = '';
+  bigPictureComments.appendChild(renderCommentsFragment(photo));
+
+  var bigPictureCommentsCounter = bigPicture.querySelector('.social__comment-count');
+  var bigPictureCommentsLoader = bigPicture.querySelector('.comments-loader');
+
+  bigPictureCommentsCounter.classList.add('hidden');
+  bigPictureCommentsLoader.classList.add('hidden');
+};
+
+var body = document.querySelector('body');
+body.classList.add('modal-open');
+
+renderBigPhoto(photoList[0]);
