@@ -75,8 +75,8 @@ var renderPhotos = function (photos) {
 renderPhotos(photoList);
 
 // наполнение биг фото
-var renderCommentsFragment = function (photo) {
-  var commentsFragment = document.createDocumentFragment();
+var createCommentsFragment = function (photo) {
+  var commentsFragment;
 
   var commentTemplate = document.querySelector('#comment')
   .content
@@ -114,7 +114,7 @@ var renderBigPhoto = function (photo) {
 
   bigPictureCommentsCount.textContent = photo.comments.length;
   bigPictureComments.textContent = '';
-  bigPictureComments.appendChild(renderCommentsFragment(photo));
+  bigPictureComments.appendChild(createCommentsFragment(photo));
 
   var bigPictureCommentsCounter = bigPicture.querySelector('.social__comment-count');
   var bigPictureCommentsLoader = bigPicture.querySelector('.comments-loader');
