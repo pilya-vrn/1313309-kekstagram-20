@@ -128,17 +128,20 @@ var uploadPreview = uploadOverlay.querySelector('.img-upload__preview');
 
 var onScaleChangeClick = function (evt) {
   var currentScale = parseInt(scaleValue.value, 10);
-  var scale = 0;
+
+  var setScaleValue = function (scale) {
+    scaleValue.value = scale + '%';
+    uploadPreview.style.transform = 'scale(' + scale / 100 + ')';
+  };
+
   switch (evt.target) {
     case scaleSmaller:
-      scale = Math.max(SCALE_MIN, currentScale - SCALE_STEP);
-      scaleValue.value = scale + '%';
-      uploadPreview.style.transform = 'scale(' + scale / 100 + ')';
+      var scale = Math.max(SCALE_MIN, currentScale - SCALE_STEP);
+      setScaleValue(scale);
       break;
     case scaleBigger:
       scale = Math.min(SCALE_MAX, currentScale + SCALE_STEP);
-      scaleValue.value = scale + '%';
-      uploadPreview.style.transform = 'scale(' + scale / 100 + ')';
+      setScaleValue(scale);
       break;
   }
 };
@@ -235,6 +238,7 @@ var onHashTagsChange = function () {
   var errorHashtag = false;
 
   var text = hashtags.value.trim();
+
   if (text) {
     var hashtagsArray = text.split(' ');
 
@@ -263,7 +267,7 @@ var onHashTagsChange = function () {
 hashtags.addEventListener('input', onHashTagsChange);
 
 // длина коммента
-var checkComments = function () {
+var onCommentsChange = function () {
   var commentsArray = textDescription.value.toLowerCase();
 
   for (var i = 0; i < commentsArray.length; i++) {
@@ -276,4 +280,4 @@ var checkComments = function () {
   }
 };
 
-checkComments();
+textDescription.addEventListener('input', onCommentsChange);
