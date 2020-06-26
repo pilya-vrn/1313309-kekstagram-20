@@ -92,24 +92,23 @@ var uploadFile = document.querySelector('#upload-file');
 var uploadCancel = document.querySelector('#upload-cancel');
 var uploadOverlay = document.querySelector('.img-upload__overlay');
 var hashtags = uploadOverlay.querySelector('.text__hashtags');
-var comments = uploadOverlay.querySelector('.text__description');
-
+var textDescription = uploadOverlay.querySelector('.text__description');
 
 var onUploadOverlayEscPress = function (evt) {
-
-  if (evt.key === 'Escape' && evt.target !== hashtags && evt.target !== comments) {
-    closeUploadOverlay();
+  if (evt.key === 'Escape' && evt.target !== hashtags && evt.target !== textDescription) {
+    evt.reventDefault();
+    closeUploadOverlayHandler();
   }
 };
 
-var openUploadOverlay = function () {
+var uploadOverlayHandler = function () {
   body.classList.add('modal-open');
   uploadOverlay.classList.remove('hidden');
 
   document.addEventListener('keydown', onUploadOverlayEscPress);
 };
 
-var closeUploadOverlay = function () {
+var closeUploadOverlayHandler = function () {
   uploadOverlay.classList.add('hidden');
   body.classList.remove('modal-open');
   uploadFile.value = '';
@@ -117,13 +116,8 @@ var closeUploadOverlay = function () {
   document.removeEventListener('keydown', onUploadOverlayEscPress);
 };
 
-uploadFile.addEventListener('change', function () {
-  openUploadOverlay();
-});
-
-uploadCancel.addEventListener('click', function () {
-  closeUploadOverlay();
-});
+uploadFile.addEventListener('change', uploadOverlayHandler);
+uploadCancel.addEventListener('click', closeUploadOverlayHandler);
 
 // масштаб
 var scaleField = uploadOverlay.querySelector('.img-upload__scale');
@@ -132,8 +126,38 @@ var scaleBigger = scaleField.querySelector('.scale__control--bigger');
 var scaleValue = scaleField.querySelector('.scale__control--value');
 var uploadPreview = uploadOverlay.querySelector('.img-upload__preview');
 
-var onScaleSmallerClick = function () {
-  // scaleValue.value = '100%';  // изменил значение в разметке, как сделать в Js не понял
+var onScaleChangeClick = function (evt) {
+  var currentScale = parseInt(scaleValue.value, 10);
+  var scale = 0;
+  switch (evt.target) {
+    case scaleSmaller:
+      scale = Math.max(SCALE_MIN, currentScale - SCALE_STEP);
+      scaleValue.value = scale + '%';
+      uploadPreview.style.transform = 'scale(' + scale / 100 + ')';
+      break;
+    case scaleBigger:
+      scale = Math.min(SCALE_MAX, currentScale + SCALE_STEP);
+      scaleValue.value = scale + '%';
+      uploadPreview.style.transform = 'scale(' + scale / 100 + ')';
+      break;
+  }
+};
+
+scaleField.addEventListener('click', onScaleChangeClick);
+/*  if (evt.target === scaleSmaller) {
+    scale = Math.max(SCALE_MIN, currentScale - SCALE_STEP);
+    scaleValue.value = scale + '%';
+    uploadPreview.style.transform = 'scale(' + scale / 100 + ')';
+  }
+
+  if (evt.target === scaleBigger) {
+    scale = Math.min(SCALE_MAX, currentScale + SCALE_STEP);
+    scaleValue.value = scale + '%';
+    uploadPreview.style.transform = 'scale(' + scale / 100 + ')';
+  }
+}; */
+
+/* var onScaleSmallerClick = function () {
   var scale = parseInt(scaleValue.value, 10);
   var currentScale = scale - SCALE_STEP;
 
@@ -148,7 +172,6 @@ var onScaleSmallerClick = function () {
 };
 
 var onScaleBiggerClick = function () {
-  // scaleValue.value = '100%'; // чтобы начальное значение было 100% и считалось от него, но при добавлении вообще не работает scale
   var scale = parseInt(scaleValue.value, 10);
   var currentScale = scale + SCALE_STEP;
 
@@ -163,40 +186,42 @@ var onScaleBiggerClick = function () {
 };
 
 scaleSmaller.addEventListener('click', onScaleSmallerClick);
-scaleBigger.addEventListener('click', onScaleBiggerClick);
+scaleBigger.addEventListener('click', onScaleBiggerClick); */
 
 // эффект на изображение
 var imgPreview = uploadPreview.querySelector('img');
-var filterInputs = document.querySelectorAll('.effects__radio');
-// var fieldset = document.querySelectorA('fieldset');
+var imgUploadEffects = document.querySelector('.effects');
 var effectLevel = document.querySelector('.img-upload__effect-level');
+var previewWithoutEffect = document.querySelector('#effect-none');
 
-if (document.querySelector('#effect-none').checked) {
-  effectLevel.style.display = 'none';
-}
+effectLevel.style.display = 'none';
 
-var addFilter = function (evt) {
-  imgPreview.removeAttribute('class');
+var onFilterSwitch = function (evt) {
+  imgPreview.className = '';
   imgPreview.classList.add('effects__preview--' + evt.target.value);
 
-  if (document.querySelector('#effect-none').checked) {
+  effectLevel.style.display = previewWithoutEffect.checked ? 'none' : 'block';
+  /* if (previewWithoutEffect.checked) {
     effectLevel.style.display = 'none';
   } else {
     effectLevel.style.display = 'block';
   }
+  /* if (uploadCancel.target) {
+    imgUploadEffects.style.display = '';
+  } */
 };
 
-for (var inp = 0; inp < filterInputs.length; inp++) {
-  filterInputs[inp].addEventListener('change', addFilter);
-}
-// хотел сделать с fieldset делегирование, но не работает. fieldset.addEventListener('change', addFilter);
+imgUploadEffects.addEventListener('change', onFilterSwitch);
 
 // валидация хештегов
 var checkSameHashtags = function (arr) {
-  for (var i = 0; i < arr.length - 1; i++) {
-    for (var j = i + 1; j < arr.length; j++) {
-      var hTagRe = new RegExp('^' + arr[i] + '$', 'i');
-      if (hTagRe.test(arr[j])) {
+  var inLowerCaseStrings = arr.map(function (value) {
+    return value.toLowerCase();
+  });
+
+  for (var i = 0; i < inLowerCaseStrings.length - 1; i++) {
+    for (var j = i + 1; j < inLowerCaseStrings.length; j++) {
+      if (inLowerCaseStrings[i] === inLowerCaseStrings[j]) {
         return true;
       }
     }
@@ -205,44 +230,50 @@ var checkSameHashtags = function (arr) {
   return false;
 };
 
+var onHashTagsChange = function () {
+  var hashTagRegExp = /^#[0-9a-zA-Zа-яА-я]{1,19}$/i;
+  var errorHashtag = false;
 
-var checkHashtags = function () {
-  hashtags.addEventListener('input', function () {
-    var hashTegRe = /^#[0-9a-zA-Zа-яА-я]{1,19}$/i;
-    var numberErrorsHashtags = 0;
+  var text = hashtags.value.trim();
+  if (text) {
+    var hashtagsArray = text.split(' ');
 
-    var text = hashtags.value.trim();
-    if (text) {
-      var hashtagsArray = text.split(' ');
-
-      for (var i = 0; i < hashtagsArray.length; i++) {
-        if (!hashTegRe.test(hashtagsArray[i])) {
-          numberErrorsHashtags++;
-        }
-      }
-
-      if (numberErrorsHashtags) {
-        hashtags.setCustomValidity('Исправьте ошибки в  хэштеге');
-        hashtags.reportValidity();
-      } else if (hashtagsArray.length > 5) {
-        hashtags.setCustomValidity('Не больше 5 хэштегов');
-        hashtags.reportValidity();
-      } else if (checkSameHashtags(hashtagsArray)) {
-        hashtags.setCustomValidity('Удалите одинаковые хэштеги');
-        hashtags.reportValidity();
-      } else {
-        hashtags.setCustomValidity('');
+    for (var i = 0; i < hashtagsArray.length; i++) {
+      if (!hashTagRegExp.test(hashtagsArray[i])) {
+        errorHashtag = true;
+        break;
       }
     }
-  });
 
-  hashtags.addEventListener('focus', function () {
-    document.removeEventListener('keydown', onUploadOverlayEscPress);
-  });
-
-  hashtags.addEventListener('blur', function () {
-    document.addEventListener('keydown', onUploadOverlayEscPress);
-  });
+    if (errorHashtag) {
+      hashtags.setCustomValidity('Исправьте ошибки в хэштеге');
+      hashtags.reportValidity();
+    } else if (hashtagsArray.length > 5) {
+      hashtags.setCustomValidity('Не больше 5 хэштегов');
+      hashtags.reportValidity();
+    } else if (checkSameHashtags(hashtagsArray)) {
+      hashtags.setCustomValidity('Удалите одинаковые хэштеги');
+      hashtags.reportValidity();
+    } else {
+      hashtags.setCustomValidity('');
+    }
+  }
 };
 
-checkHashtags();
+hashtags.addEventListener('input', onHashTagsChange);
+
+// длина коммента
+var checkComments = function () {
+  var commentsArray = textDescription.value.toLowerCase();
+
+  for (var i = 0; i < commentsArray.length; i++) {
+    if (commentsArray.length > 140) {
+      textDescription.reportValidity();
+      textDescription.setCustomValidity('Количество введенных символов не должно превышать 140');
+    } else {
+      hashtags.setCustomValidity('');
+    }
+  }
+};
+
+checkComments();
