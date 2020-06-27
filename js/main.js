@@ -24,7 +24,8 @@ var getRandomNumber = function (min, max) {
 };
 
 var createComments = function () {
-  var comment = {avatar: 'img/avatar-' + getRandomNumber(1, 6) + '.svg',
+  var comment = {
+    avatar: 'img/avatar-' + getRandomNumber(1, 6) + '.svg',
     message: MESSAGES[getRandomNumber(0, MESSAGES.length - 1)],
     name: AUTHOR_NAMES[getRandomNumber(0, AUTHOR_NAMES.length - 1)]
   };
@@ -40,7 +41,8 @@ var createComments = function () {
 var createPhotos = function () {
   var photos = [];
   for (var i = 0; i < NUMBER_PHOTOS; i++) {
-    var photo = {url: 'photos/' + (i + 1) + '.jpg',
+    var photo = {
+      url: 'photos/' + (i + 1) + '.jpg',
       description: '',
       likes: getRandomNumber(MIN_LIKES, MAX_LIKES),
       comments: createComments()
@@ -98,8 +100,9 @@ var createCommentsFragment = function (photo) {
 };
 
 // Отображает биг фото
+var bigPicture = document.querySelector('.big-picture');
+
 var renderBigPhoto = function (photo) {
-  var bigPicture = document.querySelector('.big-picture');
   bigPicture.classList.remove('hidden');
 
   var bigPictureImg = bigPicture.querySelector('.big-picture__img img');
@@ -127,3 +130,4 @@ var body = document.querySelector('body');
 body.classList.add('modal-open');
 
 renderBigPhoto(photoList[0]);
+
