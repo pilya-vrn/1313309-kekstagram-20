@@ -14,6 +14,7 @@ var MIN_LIKES = 15;
 var MAX_LIKES = 200;
 var MIN_COMMENTS = 0;
 var MAX_COMMENTS = 100;
+// var COMMENTS_NUMBER = 5;
 
 var pictureTemplate = document.querySelector('#picture');
 var pictureContent = pictureTemplate.content.querySelector('.picture');
@@ -84,8 +85,8 @@ var renderPhotos = function (photos) {
 renderPhotos(photoList);
 
 // наполнение биг фото
-var createCommentsFragment = function (photo) {
-  var commentsFragment;
+var renderCommentsFragment = function (photo) {
+  var commentsFragment = document.createDocumentFragment();
 
   var commentTemplate = document.querySelector('#comment')
   .content
@@ -106,10 +107,9 @@ var createCommentsFragment = function (photo) {
   return commentsFragment;
 };
 
-// Отображает биг фото
-var bigPicture = document.querySelector('.big-picture');
-
+// Отображает увеличенную фотографию со всей связанной информацией
 var renderBigPhoto = function (photo) {
+  var bigPicture = document.querySelector('.big-picture');
   bigPicture.classList.remove('hidden');
 
   var bigPictureImg = bigPicture.querySelector('.big-picture__img img');
@@ -124,7 +124,7 @@ var renderBigPhoto = function (photo) {
 
   bigPictureCommentsCount.textContent = photo.comments.length;
   bigPictureComments.textContent = '';
-  bigPictureComments.appendChild(createCommentsFragment(photo));
+  bigPictureComments.appendChild(renderCommentsFragment(photo));
 
   var bigPictureCommentsCounter = bigPicture.querySelector('.social__comment-count');
   var bigPictureCommentsLoader = bigPicture.querySelector('.comments-loader');
@@ -138,3 +138,35 @@ body.classList.add('modal-open');
 
 renderBigPhoto(photoList[0]);
 
+/* var bigPicture = document.querySelector('.big-picture');
+bigPicture.classList.remove('hidden');
+
+bigPicture.querySelector('.big-picture__img').src = photoList[0].url;
+
+var HTMLcomments = [];
+var n = 0;
+var getHTMLcomment = function (comments) {
+  return '<li class="social__comment"><img class="social__picture" src="'
+  + comments[n].avatar + '" alt="'
+  + comments[n].name + '" width="35" height="35"><p class="social__text">'
+  + comments[n].message + '</p></li>';
+};
+
+for (n = 0; n < COMMENTS_NUMBER; n++) {
+  HTMLcomments.push(getHTMLcomment());
+}
+
+var joinedComments = HTMLcomments.join(' ');
+
+bigPicture.querySelector('.social__comments').innerHTML = joinedComments;
+
+bigPicture.querySelector('.comments-count').textContent = photoList[0].comments;
+bigPicture.querySelector('.likes-count').textContent = photoList[0].likes;
+bigPicture.querySelector('.social__caption').textContent = photoList[0].description;
+
+var socialCommentCount = document.querySelector('.social__comment-count');
+socialCommentCount.classList.add('hidden');
+var commentsLoader = document.querySelector('.comments-loader');
+commentsLoader.classList.add('hidden');
+var body = document.querySelector('body');
+body.classList.add('modal-open'); */
