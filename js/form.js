@@ -31,6 +31,12 @@
     uploadOverlay.classList.add('hidden');
     body.classList.remove('modal-open');
     uploadFile.value = '';
+    hashtags.value = '';
+    textDescription.value = '';
+    scaleValue.value = '100%';
+    uploadPreview.style.transform = 'scale(' + 1 + ')';
+    // effectLevel.style.display = 'none';
+    // imgUploadEffects.style.display = '';
 
     document.removeEventListener('keydown', onUploadOverlayEscPress);
   };
@@ -81,9 +87,6 @@
     imgPreview.classList.add('effects__preview--' + evt.target.value);
 
     effectLevel.style.display = previewWithoutEffect.checked ? 'none' : 'block';
-  /* if (uploadCancel.target) {
-    imgUploadEffects.style.display = '';
-  } */
   };
 
   imgUploadEffects.addEventListener('change', onFilterSwitch);
