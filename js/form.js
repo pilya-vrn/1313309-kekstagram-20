@@ -142,6 +142,7 @@
   hashtags.addEventListener('input', onHashTagsChange);
 
   // длина коммента
+  textDescription.value = '';
   var onCommentsChange = function () {
     var commentsArray = textDescription.value.toLowerCase();
 
