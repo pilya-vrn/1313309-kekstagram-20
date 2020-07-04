@@ -14,7 +14,7 @@ var MIN_LIKES = 15;
 var MAX_LIKES = 200;
 var MIN_COMMENTS = 0;
 var MAX_COMMENTS = 100;
-// var COMMENTS_NUMBER = 5;
+var COMMENTS_NUMBER = 5;
 
 var pictureTemplate = document.querySelector('#picture');
 var pictureContent = pictureTemplate.content.querySelector('.picture');
@@ -84,68 +84,17 @@ var renderPhotos = function (photos) {
 
 renderPhotos(photoList);
 
-// наполнение биг фото
-var renderCommentsFragment = function (photo) {
-  var commentsFragment = document.createDocumentFragment();
+// биг фото
+var comments = createComments();
 
-  var commentTemplate = document.querySelector('#comment')
-  .content
-  .querySelector('.social__comment');
-
-  for (var i = 0; i < photo.comments.length; i++) {
-    var comment = commentTemplate.cloneNode(true);
-    var commentAvatar = comment.querySelector('img');
-    var commetMessage = comment.querySelector('.social__text');
-
-    commentAvatar.src = photo.comments[i].avatar;
-    commentAvatar.alt = photo.comments[i].name;
-    commetMessage.textContent = photo.comments[i].messsage;
-
-    commentsFragment.appendChild(comment);
-  }
-
-  return commentsFragment;
-};
-
-// Отображает увеличенную фотографию со всей связанной информацией
-var renderBigPhoto = function (photo) {
-  var bigPicture = document.querySelector('.big-picture');
-  bigPicture.classList.remove('hidden');
-
-  var bigPictureImg = bigPicture.querySelector('.big-picture__img img');
-  var bigPictureLikes = bigPicture.querySelector('.likes-count');
-  var bigPictureDescription = bigPicture.querySelector('.social__caption');
-  var bigPictureCommentsCount = bigPicture.querySelector('.comments-count');
-  var bigPictureComments = bigPicture.querySelector('.social__comments');
-
-  bigPictureImg.src = photo.url;
-  bigPictureLikes.textContent = photo.likes;
-  bigPictureDescription.textContent = photo.description;
-
-  bigPictureCommentsCount.textContent = photo.comments.length;
-  bigPictureComments.textContent = '';
-  bigPictureComments.appendChild(renderCommentsFragment(photo));
-
-  var bigPictureCommentsCounter = bigPicture.querySelector('.social__comment-count');
-  var bigPictureCommentsLoader = bigPicture.querySelector('.comments-loader');
-
-  bigPictureCommentsCounter.classList.add('hidden');
-  bigPictureCommentsLoader.classList.add('hidden');
-};
-
-var body = document.querySelector('body');
-body.classList.add('modal-open');
-
-renderBigPhoto(photoList[0]);
-
-/* var bigPicture = document.querySelector('.big-picture');
+var bigPicture = document.querySelector('.big-picture');
 bigPicture.classList.remove('hidden');
 
-bigPicture.querySelector('.big-picture__img').src = photoList[0].url;
+bigPicture.querySelector('.big-picture__img').src = photoList[0].url; // поч фото из бекграунда?
 
 var HTMLcomments = [];
 var n = 0;
-var getHTMLcomment = function (comments) {
+var getСommentMarking = function () {
   return '<li class="social__comment"><img class="social__picture" src="'
   + comments[n].avatar + '" alt="'
   + comments[n].name + '" width="35" height="35"><p class="social__text">'
@@ -153,12 +102,12 @@ var getHTMLcomment = function (comments) {
 };
 
 for (n = 0; n < COMMENTS_NUMBER; n++) {
-  HTMLcomments.push(getHTMLcomment());
+  HTMLcomments.push(getСommentMarking());
 }
 
-var joinedComments = HTMLcomments.join(' ');
+var commentsToString = HTMLcomments.join(' '); // e,bhftv
 
-bigPicture.querySelector('.social__comments').innerHTML = joinedComments;
+bigPicture.querySelector('.social__comments').innerHTML = commentsToString;
 
 bigPicture.querySelector('.comments-count').textContent = photoList[0].comments;
 bigPicture.querySelector('.likes-count').textContent = photoList[0].likes;
@@ -169,4 +118,4 @@ socialCommentCount.classList.add('hidden');
 var commentsLoader = document.querySelector('.comments-loader');
 commentsLoader.classList.add('hidden');
 var body = document.querySelector('body');
-body.classList.add('modal-open'); */
+body.classList.add('modal-open');
