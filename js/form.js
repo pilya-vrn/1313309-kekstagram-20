@@ -35,8 +35,9 @@
     textDescription.value = '';
     scaleValue.value = '100%';
     uploadPreview.style.transform = 'scale(' + 1 + ')';
-    // effectLevel.style.display = 'none';
-    // imgUploadEffects.style.display = '';
+    imgPreview.className = '';
+    effectLevel.style.display = 'none';
+    defaultEffect.checked = true;
 
     document.removeEventListener('keydown', onUploadOverlayEscPress);
   };
@@ -78,7 +79,8 @@
   var imgPreview = uploadPreview.querySelector('img');
   var imgUploadEffects = document.querySelector('.effects');
   var effectLevel = document.querySelector('.img-upload__effect-level');
-  var previewWithoutEffect = document.querySelector('#effect-none');
+  var defaultEffect = document.querySelector('#effect-none');
+
 
   effectLevel.style.display = 'none';
 
@@ -86,10 +88,70 @@
     imgPreview.className = '';
     imgPreview.classList.add('effects__preview--' + evt.target.value);
 
-    effectLevel.style.display = previewWithoutEffect.checked ? 'none' : 'block';
+    effectLevel.style.display = defaultEffect.checked ? 'none' : 'block';
+    /* effectLevelPin.style.left = 20 + 'px';
+    effectLevelValue.value = 20 * 100 / effectLevelLine.offsetWidth;
+    effectLevelDepth.style.width = effectLevelValue.value + '%'; */ // разобраться с запоминанием ползунка
   };
 
   imgUploadEffects.addEventListener('change', onFilterSwitch);
+
+  // ползунок
+  var effectLevelLine = document.querySelector('.effect-level__line');
+  var effectLevelPin = document.querySelector('.effect-level__pin');
+  var effectLevelDepth = document.querySelector('.effect-level__depth');
+  var effectLevelValue = document.querySelector('.effect-level__value');
+  var effectsRadio = document.querySelectorAll('.effects__radio');
+
+  var getFilters = function (value) {
+    return [
+      '',
+      'grayscale(' + value * 1 + ')',
+      'sepia(' + value * 1 + ')',
+      'invert(' + value * 100 + '%)',
+      'blur(' + value * 3 + 'px)',
+      'brightness(' + (value * 2 + 1) + ')'
+    ];
+  };
+
+  effectLevelPin.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+    var startCoord = evt.clientX;
+
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+
+      var shift = startCoord - moveEvt.clientX;
+      startCoord = moveEvt.clientX;
+      var newCoord = effectLevelPin.offsetLeft - shift;
+      var filterValue = newCoord / effectLevelLine.offsetWidth;
+
+      if (newCoord < 0 || newCoord > effectLevelLine.offsetWidth) {
+        newCoord = newCoord < 0 ? 0 : effectLevelLine.offsetWidth;
+      }
+
+      effectLevelPin.style.left = newCoord + 'px';
+      effectLevelValue.value = newCoord * 100 / effectLevelLine.offsetWidth;
+      effectLevelDepth.style.width = effectLevelValue.value + '%';
+
+      for (var n = 0; n < effectsRadio.length; n++) {
+        if (imgPreview.classList.contains('effects__preview--' + effectsRadio[n].value)) {
+          imgPreview.style.filter = getFilters(filterValue)[n];
+        }
+      }
+
+    };
+
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('change', function () {});
+    document.addEventListener('mouseup', onMouseUp);
+  });
 
   // валидация хештегов
   var checkSameHashtags = function (arr) {
