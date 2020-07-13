@@ -89,9 +89,9 @@
     imgPreview.classList.add('effects__preview--' + evt.target.value);
 
     effectLevel.style.display = defaultEffect.checked ? 'none' : 'block';
-    /* effectLevelPin.style.left = 20 + 'px';
-    effectLevelValue.value = 20 * 100 / effectLevelLine.offsetWidth;
-    effectLevelDepth.style.width = effectLevelValue.value + '%'; */ // разобраться с запоминанием ползунка
+    effectLevelPin.style.left = 50 + 'px';
+    effectLevelValue.value = 50 * 100 / effectLevelLine.offsetWidth;
+    effectLevelDepth.style.width = effectLevelValue.value + '%';
   };
 
   imgUploadEffects.addEventListener('change', onFilterSwitch);

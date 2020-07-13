@@ -84,4 +84,9 @@
   };
 
   renderPhotos(photoList);
+
+  window.photoGalery =
+  {
+    photoList: photoList
+  };
 })();
