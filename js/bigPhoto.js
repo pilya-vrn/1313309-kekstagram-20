@@ -40,8 +40,6 @@
     var commentsElements = createSocialComments(picture.comments);
 
     comments.appendChild(commentsElements);
-
-
   };
 
   var showBigPicture = function (evt) {
@@ -51,13 +49,14 @@
     if (pictureElement) {
       evt.preventDefault();
       var src = pictureElement.getAttribute('src');
-      var picture = window.photoGalery.photoList.find(function (value) {
+      var picture = window.photos.find(function (value) {
         return value.url === src;
       });
 
       if (picture) {
         renderBigPicture(picture);
       }
+
     }
     bigPictureCancel.addEventListener('click', hideBigPicture);
     pictureElement.addEventListener('keydown', onPictureEscPress);
