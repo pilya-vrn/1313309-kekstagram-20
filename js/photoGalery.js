@@ -4,6 +4,7 @@
   window.photos = [];
 
   var URL_GET = 'https://javascript.pages.academy/kekstagram/data';
+  var URL_POST = 'https://javascript.pages.academy/kekstagram';
 
   var pictureTemplate = document.querySelector('#picture');
   var pictureContent = pictureTemplate.content.querySelector('.picture');
@@ -29,9 +30,28 @@
     window.photos = photos;
   };
 
-  var onUnsuccessfulDataLoaded = function (errorCode, errorText) {
+  window.server.getDataFromServer(URL_GET, successHandler, onErrorLoad);
+
+  var onErrorLoad = function (errorCode, errorText) {
     throw new Error(window.server.getErrorByCode(errorCode, errorText));
   };
 
-  window.server.getDataFromServer(URL_GET, successHandler, onUnsuccessfulDataLoaded);
+  var onSuccessUpload = function () {
+    window.form.closeUploadOverlayHandler();
+    window.form.showImgUploadSuccessMessage();
+  };
+
+  var onErrorUpload = function (errorCode, errorText) {
+    window.form.closeUploadOverlayHandler();
+    window.form.showImgUploadErrorMessage();
+    throw new Error(window.serverErrors.getErrorByCode(errorCode, errorText));
+  };
+
+  var imgUploadForm = document.querySelector('.img-upload__form');
+  imgUploadForm.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    var formData = new FormData(imgUploadForm);
+    window.server.uploadDataToServer(URL_POST, formData, onSuccessUpload, onErrorUpload);
+  });
+
 })();

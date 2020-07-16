@@ -4,6 +4,7 @@
   var SCALE_MIN = 25;
   var SCALE_MAX = 100;
   var SCALE_STEP = 25;
+  var URL_POST = 'https://javascript.pages.academy/kekstagram';
 
   // загрузка нового изображения
   var body = document.querySelector('body');
@@ -12,6 +13,7 @@
   var uploadOverlay = document.querySelector('.img-upload__overlay');
   var hashtags = uploadOverlay.querySelector('.text__hashtags');
   var textDescription = uploadOverlay.querySelector('.text__description');
+  var sectionMain = document.querySelector('main');
 
   var onUploadOverlayEscPress = function (evt) {
     if (evt.key === 'Escape' && evt.target !== hashtags && evt.target !== textDescription) {
@@ -33,11 +35,13 @@
     uploadFile.value = '';
     hashtags.value = '';
     textDescription.value = '';
-    scaleValue.value = '100%';
-    uploadPreview.style.transform = 'scale(' + 1 + ')';
-    imgPreview.className = '';
-    effectLevel.style.display = 'none';
-    defaultEffect.checked = true;
+    returnDefaultParams();
+    // returnDefaultParams();
+    // scaleValue.value = '100%';
+    // uploadPreview.style.transform = 'scale(' + 1 + ')';
+    // imgPreview.className = '';
+    // effectLevel.style.display = 'none';
+    // defaultEffect.checked = true;
 
     document.removeEventListener('keydown', onUploadOverlayEscPress);
   };
@@ -149,7 +153,7 @@
     };
 
     document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('change', function () {});
+    // document.addEventListener('change', function () {});
     document.addEventListener('mouseup', onMouseUp);
   });
 
@@ -218,5 +222,115 @@
     }
   };
 
+  var returnDefaultParams = function () {
+    scaleValue.value = '100%';
+    uploadPreview.style.transform = 'scale(' + 1 + ')';
+    imgPreview.className = '';
+    effectLevel.style.display = 'none';
+    defaultEffect.checked = true;
+  };
+
   textDescription.addEventListener('input', onCommentsChange);
+
+  var createSuccessMessageElement = function () {
+    var successTemplate = document.querySelector('#success');
+
+    var successMessage = successTemplate.content.querySelector('.success');
+    successMessage.classList.add('hidden');
+    sectionMain.appendChild(successMessage);
+  };
+
+  var createErrorMessageElement = function () {
+    var errorTemplate = document.querySelector('#error');
+
+    var errorMessage = errorTemplate.content.querySelector('.error');
+    errorMessage.classList.add('hidden');
+    sectionMain.appendChild(errorMessage);
+  };
+
+  var showImgUploadSuccessMessage = function () {
+    if (!document.querySelector('.success')) {
+      createSuccessMessageElement();
+    }
+
+    var successMessage = document.querySelector('.success');
+    successMessage.classList.remove('hidden');
+
+    var closeSuccessMessege = function () {
+      successMessage.classList.add('hidden');
+      document.removeEventListener('keydown', onSuccessMessagePressEsc);
+      successMessage.removeEventListener('click', onSuccessMessageClick);
+    };
+
+    var onSuccessMessageClick = function (evt) {
+      if (evt.target.className === 'success' || evt.target.className === 'success__button') {
+        closeSuccessMessege();
+      }
+    };
+
+    var onSuccessMessagePressEsc = function (evt) {
+      if (evt.key === 'Escape') {
+        evt.preventDefault();
+        closeSuccessMessege();
+      }
+    };
+
+    successMessage.addEventListener('click', onSuccessMessageClick);
+    document.addEventListener('keydown', onSuccessMessagePressEsc);
+  };
+
+  var showImgUploadErrorMessage = function () {
+    if (!document.querySelector('.error')) {
+      createErrorMessageElement();
+    }
+
+    var errorMessage = document.querySelector('.error');
+    errorMessage.classList.remove('hidden');
+
+    var closeErrorMessege = function () {
+      errorMessage.classList.add('hidden');
+      document.removeEventListener('keydown', onErrorMessagePressEsc);
+      errorMessage.removeEventListener('click', onErrorMessageClick);
+    };
+
+    var onErrorMessageClick = function (evt) {
+      if (evt.target.className === 'error' || evt.target.className === 'error__button') {
+        closeErrorMessege();
+      }
+    };
+
+    var onErrorMessagePressEsc = function (evt) {
+      if (evt.key === 'Escape') {
+        evt.preventDefault();
+        closeErrorMessege();
+      }
+    };
+
+    errorMessage.addEventListener('click', onErrorMessageClick);
+    document.addEventListener('keydown', onErrorMessagePressEsc);
+  };
+
+  var onSuccessUpload = function () {
+    closeUploadOverlayHandler();
+    showImgUploadSuccessMessage();
+  };
+
+  var onErrorUpload = function (errorCode, errorText) {
+    closeUploadOverlayHandler();
+    showImgUploadErrorMessage();
+    throw new Error(window.server.getErrorByCode(errorCode, errorText));
+  };
+
+  var imgUploadForm = document.querySelector('.img-upload__form');
+  imgUploadForm.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    var formData = new FormData(imgUploadForm);
+    window.server.uploadDataToServer(URL_POST, formData, onSuccessUpload, onErrorUpload);
+  });
+  /*
+  window.form = {
+    closeUploadOverlayHandler: closeUploadOverlayHandler,
+    showImgUploadSuccessMessage: showImgUploadSuccessMessage,
+    showImgUploadErrorMessage: showImgUploadErrorMessage
+  }; */
 })();

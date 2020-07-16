@@ -17,6 +17,21 @@
     xhr.send();
   };
 
+  var uploadDataToServer = function (url, data, onSuccess, onError) {
+
+    xhr.addEventListener('load', function () {
+      if (xhr.status !== 200) {
+        onError(xhr.status, xhr.statusText);
+      }
+
+      onSuccess(xhr.response);
+
+    });
+
+    xhr.open('POST', url);
+    xhr.send(data);
+  };
+
   var serverErrorMap = {
     '400': 'Сервер обнаружил в запросе клиента синтаксическую ошибку',
     '401': 'Требуется авторизация',
@@ -34,6 +49,7 @@
 
   window.server = {
     getDataFromServer: getDataFromServer,
+    uploadDataToServer: uploadDataToServer,
     getErrorByCode: getErrorByCode
   };
 
