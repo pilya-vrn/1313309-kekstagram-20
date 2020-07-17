@@ -244,6 +244,7 @@
     fragment.appendChild(node);
     sectionMain.appendChild(fragment);
     uploadOverlay.classList.add('hidden');
+
     button.addEventListener('click', closeFunc);
     document.addEventListener('keydown', onMessagePressEsc);
   };

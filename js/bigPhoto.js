@@ -6,7 +6,7 @@
   var bigPictureCancel = document.querySelector('.big-picture__cancel');
   var socialFooterText = document.querySelector('.social__footer-text');
 
-  var commentTemplate = bigPicture.querySelector('.social__comment');
+  var commentTemplate = document.querySelector('#social__comment').content.querySelector('.social__comment');
 
   var createSocialComment = function (comment) {
     var socialComment = commentTemplate.cloneNode(true);
@@ -39,8 +39,24 @@
     var comments = bigPicture.querySelector('.social__comments');
     var commentsElements = createSocialComments(picture.comments);
 
+    // comments.appendChild(commentsElements);
+    comments.innerHTML = '';
     comments.appendChild(commentsElements);
   };
+
+  var likesCount = document.querySelector('.likes-count');
+
+  var onLikeClickHandler = function () {
+    if (likesCount.classList.contains('likes-count--active')) {
+      likesCount.textContent--;
+    } else {
+      likesCount.textContent++;
+    }
+
+    likesCount.classList.toggle('likes-count--active');
+  };
+
+  likesCount.addEventListener('click', onLikeClickHandler);// Отображается на каждой фотке, не отображается в галереи.
 
   var showBigPicture = function (evt) {
     var target = evt.target;
