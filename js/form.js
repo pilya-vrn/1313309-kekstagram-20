@@ -232,46 +232,93 @@
 
   textDescription.addEventListener('input', onCommentsChange);
 
-  var createSuccessMessageElement = function () {
-    var successTemplate = document.querySelector('#success');
+  var successTemplate = document.querySelector('#success');
+  var successMessage = successTemplate.content.querySelector('.success');
+  var errorTemplate = document.querySelector('#error');
+  var errorMessage = errorTemplate.content.querySelector('.error');
+  var successButton = successMessage.querySelector('.success__button');
+  var errorButton = errorMessage.querySelector('.error__button');
 
-    var successMessage = successTemplate.content.querySelector('.success');
+  var showImgUploadMessage = function (node, button, closeFunc, onMessagePressEsc) {
+    var fragment = document.createDocumentFragment();
+    fragment.appendChild(node);
+    sectionMain.appendChild(fragment);
+    uploadOverlay.classList.add('hidden');
+    button.addEventListener('click', closeFunc);
+    document.addEventListener('keydown', onMessagePressEsc);
+  };
+
+  var successHandler = function () {
+    showImgUploadMessage(successMessage, successButton, closeSuccessMessage, onSuccessPressEsc);
+  };
+
+  var errorHandler = function () {
+    showImgUploadMessage(errorMessage, errorButton, closeErrorMessage, onErrorPressEsc);
+    throw new Error();
+  };
+
+  var onSuccessPressEsc = function (evt) {
+    if (evt.key === 'Escape') {
+      evt.preventDefault();
+      closeSuccessMessage();
+    }
+  };
+
+  var onErrorPressEsc = function (evt) {
+    if (evt.key === 'Escape') {
+      evt.preventDefault();
+      closeErrorMessage();
+    }
+  };
+
+  var closeMessage = function (node, button, closeFunc, onMessagePressEsc) {
+    node.remove();
+    button.removeEventListener('click', closeFunc);
+    document.removeEventListener('keydown', onMessagePressEsc);
+    setDefaultParams();
+  };
+
+  var closeSuccessMessage = function () {
+    closeMessage(successMessage, successButton, closeSuccessMessage, onSuccessPressEsc);
+  };
+
+  var closeErrorMessage = function () {
+    closeMessage(errorMessage, errorButton, closeErrorMessage, onErrorPressEsc);
+  };
+  /*
+  var showSuccessMessageElement = function () {
     successMessage.classList.add('hidden');
     sectionMain.appendChild(successMessage);
   };
 
-  var createErrorMessageElement = function () {
-    var errorTemplate = document.querySelector('#error');
-
-    var errorMessage = errorTemplate.content.querySelector('.error');
+  var showErrorMessageElement = function () {
     errorMessage.classList.add('hidden');
     sectionMain.appendChild(errorMessage);
   };
 
   var showImgUploadSuccessMessage = function () {
-    if (!document.querySelector('.success')) {
-      createSuccessMessageElement();
+    if (!document.querySelector('.successMessage')) {
+      showSuccessMessageElement();
     }
 
-    var successMessage = document.querySelector('.success');
     successMessage.classList.remove('hidden');
 
-    var closeSuccessMessege = function () {
+    var closeSuccessMessageMessage = function () {
       successMessage.classList.add('hidden');
       document.removeEventListener('keydown', onSuccessMessagePressEsc);
       successMessage.removeEventListener('click', onSuccessMessageClick);
     };
 
     var onSuccessMessageClick = function (evt) {
-      if (evt.target.className === 'success' || evt.target.className === 'success__button') {
-        closeSuccessMessege();
+      if (evt.target.className === 'successMessage' || evt.target.className === 'success__button') {
+        closeSuccessMessageMessage();
       }
     };
 
     var onSuccessMessagePressEsc = function (evt) {
       if (evt.key === 'Escape') {
         evt.preventDefault();
-        closeSuccessMessege();
+        closeSuccessMessageMessage();
       }
     };
 
@@ -280,29 +327,29 @@
   };
 
   var showImgUploadErrorMessage = function () {
-    if (!document.querySelector('.error')) {
-      createErrorMessageElement();
+    if (!document.querySelector('.errorMessage')) {
+      showErrorMessageElement();
     }
 
-    var errorMessage = document.querySelector('.error');
+    // var errorMessage = document.querySelector('.errorMessage');
     errorMessage.classList.remove('hidden');
 
-    var closeErrorMessege = function () {
+    var closeErrorMessageMessage = function () {
       errorMessage.classList.add('hidden');
       document.removeEventListener('keydown', onErrorMessagePressEsc);
       errorMessage.removeEventListener('click', onErrorMessageClick);
     };
 
     var onErrorMessageClick = function (evt) {
-      if (evt.target.className === 'error' || evt.target.className === 'error__button') {
-        closeErrorMessege();
+      if (evt.target.className === 'errorMessage' || evt.target.className === 'error__button') {
+        closeErrorMessageMessage();
       }
     };
 
     var onErrorMessagePressEsc = function (evt) {
       if (evt.key === 'Escape') {
         evt.preventDefault();
-        closeErrorMessege();
+        closeErrorMessageMessage();
       }
     };
 
@@ -315,17 +362,20 @@
     showImgUploadSuccessMessage();
   };
 
-  var onErrorUpload = function (errorCode, errorText) {
+  var onErrorUpload = function () {
     closeUploadOverlayHandler();
     showImgUploadErrorMessage();
-    throw new Error(window.server.getErrorByCode(errorCode, errorText));
-  };
+
+    throw new Error();
+  }; */
 
   var imgUploadForm = document.querySelector('.img-upload__form');
   imgUploadForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
+
     var formData = new FormData(imgUploadForm);
-    window.server.uploadDataToServer(URL_POST, formData, onSuccessUpload, onErrorUpload);
+
+    window.server.uploadDataToServer(URL_POST, formData, successHandler, errorHandler);
   });
   /*
   window.form = {
