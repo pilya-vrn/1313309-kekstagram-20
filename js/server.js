@@ -18,7 +18,6 @@
   };
 
   var uploadDataToServer = function (url, data, onSuccess, onError) {
-
     xhr.addEventListener('load', function () {
       if (xhr.status !== 200) {
         onError(xhr.status, xhr.statusText);

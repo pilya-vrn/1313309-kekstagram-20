@@ -32,11 +32,8 @@
   var closeUploadOverlayHandler = function () {
     uploadOverlay.classList.add('hidden');
     body.classList.remove('modal-open');
-    uploadFile.value = '';
-    hashtags.value = '';
-    textDescription.value = '';
-    returnDefaultParams();
-    // returnDefaultParams();
+    setDefaultParams();
+    // setDefaultParams();
     // scaleValue.value = '100%';
     // uploadPreview.style.transform = 'scale(' + 1 + ')';
     // imgPreview.className = '';
@@ -222,7 +219,10 @@
     }
   };
 
-  var returnDefaultParams = function () {
+  var setDefaultParams = function () {
+    uploadFile.value = '';
+    hashtags.value = '';
+    textDescription.value = '';
     scaleValue.value = '100%';
     uploadPreview.style.transform = 'scale(' + 1 + ')';
     imgPreview.className = '';
